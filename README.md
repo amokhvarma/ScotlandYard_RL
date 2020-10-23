@@ -1,6 +1,12 @@
 # ScotlandYard_RL
 
-You better lose yourself in the music, the moment
-You own it, you better never let it go
-You only get one shot, do not miss your chance to blow
-This opportunity comes once in a lifetime
+Implemention and analysis of various RL algorithms to play Scotland Yard. 
+
+## Tasks
+- [x] Detective
+- [ ] Mr X
+- [ ] Graph
+- [x] Observation Class
+- [ ] Sample run of environment
+
+Deadline for above task : Latest before / right after minors 
