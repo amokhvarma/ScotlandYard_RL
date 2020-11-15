@@ -1,6 +1,6 @@
 class observation:
    # n is the number of people
-    def __init__(self,n):
+    def __init__(self,n=4):
         #  Positions of all detectives
         self.positions_detective = [[] for i in range(n-1)]
         # Number of cards left for each detective. Each element is an array of number of cards of each transport left

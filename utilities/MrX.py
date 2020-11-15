@@ -5,7 +5,7 @@ class MrX:
     # MrX is almost same as detective except he has 2 extra types of cards, multi move (index 3) and hide move  (index 4)
     # Each index 4 move has to be accompanied by the actual move.
 
-    def initX(self):
+    def __init__(self):
         self.cards = [3,3,3,3,2]
         self.previous_move = None
         self.moves = 0
