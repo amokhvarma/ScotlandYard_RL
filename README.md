@@ -7,6 +7,7 @@ Implemention and analysis of various RL algorithms to play Scotland Yard.
 - [x] Mr X
 - [x] Graph
 - [x] Observation Class
-- [ ] Sample run of environment
-
+- [x] Sample run of environment
+- [ ] Make a method that returns all possible actions, including targets 
+- [ ] Decide on a reward function. \
 Deadline for above task : Latest before / right after minors 

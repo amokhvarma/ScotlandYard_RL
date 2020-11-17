@@ -2,15 +2,16 @@ import pandas as pd
 import networkx as nx
 import numpy as np
 import random
-
+import os
 class graph:
 
     # Read the csv files and make graph here
     def __init__(self):
         # numbered 1 to 199
-        taxi = pd.read_csv('taxi.csv')
-        bus = pd.read_csv('bus.csv')
-        underground = pd.read_csv('underground.csv')
+        path = os.getcwd()+"/utilities/"
+        taxi = pd.read_csv(path+'taxi.csv')
+        bus = pd.read_csv(path+'bus.csv')
+        underground = pd.read_csv(path+'underground.csv')
         G = nx.MultiGraph()
         G.add_nodes_from( range(1,200) )
         for i in range(len(taxi)):
