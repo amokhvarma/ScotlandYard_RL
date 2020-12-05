@@ -2,157 +2,211 @@ from utilities import *
 import random
 from utilities import detective,graph_utils,MrX,observation
 class game:
+    def __init__(self,n=4):
+        self.board = graph_utils.graph()
+        self.no_of_players = n
+        positions = self.board.initial_pos(n+1)
+        self.M={13,26,29,34,50,53,91,94,103,112,117,132,138,141,155,174,197,198}
 
-   def __init__(self,n=4):
-      self.board = graph_utils.graph()
-      self.no_of_players = n
-      positions = self.board.initial_pos(n+1)
+        self.X = MrX.MrX()
+        self.detectives = [detective.detective(i) for i in range(0,n)]
+        for k in range(0,n):
+            self.M.remove(positions[k])
+        self.X.set_position(positions[0])
+        for i in range(1,n+1):
+            self.detectives[i-1].set_position(positions[i])
 
-      self.X = MrX.MrX()
-      self.detectives = [detective.detective(i) for i in range(0,n)]
+        self.end_flag = False
+        self.move = 0
 
-      self.X.set_position(positions[0])
-      for i in range(1,n+1):
-         self.detectives[i-1].set_position(positions[i])
+        self.observation = observation.observation()
+        self.X_reward=0
+        self.D_reward=0
+        return
 
-      self.end_flag = False
-      self.move = 0
+    def finish(self):
+        if(self.move >= 24):
+            self.end_flag = True
+            self.X_reward+=10
+            self.D_reward+=-10
+            return self.end_flag
 
-      self.observation = observation.observation()
-      return
+    for i in range(1,self.no_of_players):
 
-   def finish(self):
-     if(self.move >= 24):
-        self.end_flag = True
-        return self.end_flag
-
-     for i in range(1,self.no_of_players):
         if(self.X.position == self.detectives[i].position):
-           self.end_flag = True
-           return self.end_flag
-
-     self.end_flag = False
+            self.end_flag = True
+            self.X_reward+=-10
+            self.D_reward+=10
+            return self.end_flag
+    self.X_reward+=10
+    self.D_reward+=-10
+    self.end_flag = False
 
    # Takes action . Target and mode are lists. planning is "random" for now
-   def take_action(self,target,type,mode,index,planning = "None"):
+    def take_action(self,target,type,mode,index,planning = "None"):
 
-      if(type == "detective"):
-         agent = self.detectives[index]
+        if(type == "detective"):
+            agent = self.detectives[index]
 
-         print("Detective ",index," Cards left : ", agent.cards)
+            print("Detective ",index," Cards left : ", agent.cards)
 
-         if(planning == "random"):
-            (target,mode_new) = self.random_action(type,mode,agent)
-            # If there is no viable target, action fails.
-            if(target == -1):
-               print("Detective ", index, "Failed ... \n")
-               return (-1,-1,-1,self.end_flag)
+            if(planning == "random"):
+                (target,mode_new) = self.random_action(type,mode,agent)
+                # If there is no viable target, action fails.
+                if(target == -1):
+                    print("Detective ", index, "Failed ... \n")
+                    return (-1,-1,-1,self.end_flag)
 
-            print("Target,Mode : ",target,mode_new)
-            agent.take_action(target, mode_new)
-         else:
-            print("Target,Mode : " , target,mode)
-            agent.take_action(target,mode)
-         # Update the observation
-         self.observation.update_observation(type,index,agent)
-
-      else:
-         print("X Cards left : ", self.X.cards)
-         if(planning == "random"):
-            (target,mode_new) = self.random_action(type,mode,self.X)
-            # No viable actions
-            if(target == -1):
-               # Failed moved still counted as move here
-               self.X.moves+=1
-
-               if(len(mode) > 0 and mode[0]==3):
-                  self.X.moves+=1
-
-               self.move = self.X.moves
-
-               print("X Failed ..")
-               return (-1,-1,-1,self.end_flag)
-
-            print("Target/Mode : ", target,mode_new)
-            self.X.take_action(target, mode_new)
-         else:
-            print("Target,Mode : ", target,mode)
-            self.X.take_action(target,mode)
-         self.observation.update_observation(type,index,self.X)
-
-      reward = 0
-      self.move = self.X.moves
-
-      self.finish()
-      return (self.observation,reward,self.end_flag)
-
-   def random_action(self,type,mode,agent):
-      if(type == "detective"):
-         (target,action) = self.choose_random_target(agent)
-
-         if(target < 0):
-            return [-1,-1]
-
-         return ([target],[action])
-
-      else:
-         if(not mode==[] and mode[0] == 3):
-            (target1,action1) = self.choose_random_target(agent,type)
-            if(target1 == -1):
-               return [-1,-1]
-            (target2,action2) = self.choose_random_target(agent,type)
-            if(target2 == -1):
-               return [-1,-1]
-            return ([target1,target2],[3,action1,action2])
-
-         else:
-            (target1,action1) = self.choose_random_target(agent,type)
-            if(target1 == -1):
-               return [-1,-1]
-            if(not mode == [] and mode == 4):
-               return ([target1],[4,action1])
+                print("Target,Mode : ",target,mode_new)
+                agent.take_action(target, mode_new)
             else:
-               return ([target1],[action1])
+                print("Target,Mode : " , target,mode)
+                agent.take_action(target,mode)
+             # Update the observation
+            self.observation.update_observation(type,index,agent)
+            for i in self.detectives:
+                if i.position in self.M:
+                    self.M.remove(i.position)
+            self.D_reward+=self.reward('Detective')
 
-   def isEmpty(self,node):
-      for i in range(0,self.no_of_players):
-         if(self.detectives[i].position == node):
-            return False
+        else:
+            print("X Cards left : ", self.X.cards)
+            if(planning == "random"):
+                (target,mode_new) = self.random_action(type,mode,self.X)
+                # No viable actions
+                if(target == -1):
+                   # Failed moved still counted as move here
+                    self.X.moves+=1
 
-      return True
+                    if(len(mode) > 0 and mode[0]==3):
+                        self.X.moves+=1
 
-   def choose_random_target(self,agent,type = "detective"):
-      for i in range(0,10):
-         # Try actions multiple times
-         action = agent.random_action()
+                    self.move = self.X.moves
 
-         if (action < 0):
-            print("No actions left ")
-            return (-2, -1)
+                    print("X Failed ..")
+                    return (-1,-1,-1,self.end_flag)
 
-         l = self.board.connections(agent.position)[action]
+                print("Target/Mode : ", target,mode_new)
+                self.X.take_action(target, mode_new)
+            else:
+                print("Target,Mode : ", target,mode)
+                self.X.take_action(target,mode)
+            self.observation.update_observation(type,index,self.X)
+            temp={}
+            for i in self.M:
+                z=self.board.connections(i)
+                if type=='taxi':
+                    for j in z[0]:
+                        temp.add(j)
+                if type=='bus':
+                    for j in z[1]:
+                        temp.add(j)
+                if type=='underground':
+                    for j in z[2]:
+                        temp.add(j)
+            for i in self.detectives:
+                if i.position in temp:
+                    temp.remove(i.position)
+            self.M=temp
+            self.X_reward+=self.reward('X')
 
-         #print(action,self.board.connections(agent.position))
 
-         if(l == []):
-            # We retry with a new action
-            continue
 
-         if(type == "x"):
-            for i in range(0,10):
-               target = random.sample(l, 1)[0]
-               if(self.isEmpty(target)):
-                  return (target,action)
+        self.move = self.X.moves
 
-         else:
-            target = random.sample(l,1)[0]
-            return (target,action)
+        self.finish()
+        return (self.observation,reward,self.end_flag)
 
-      print("No empty spot")
-      return (-1,-1)
+    def random_action(self,type,mode,agent):
+        if(type == "detective"):
+            (target,action) = self.choose_random_target(agent)
 
-   def print_pos(self):
-      positions = [x.position for x in self.detectives]
-      positions.append(self.X.position)
-      print("Positions of Detective and X " ,positions)
-      return
+            if(target < 0):
+                return [-1,-1]
+
+            return ([target],[action])
+
+        else:
+            if(not mode==[] and mode[0] == 3):
+                (target1,action1) = self.choose_random_target(agent,type)
+                if(target1 == -1):
+                    return [-1,-1]
+                (target2,action2) = self.choose_random_target(agent,type)
+                if(target2 == -1):
+                    return [-1,-1]
+                return ([target1,target2],[3,action1,action2])
+
+            else:
+                (target1,action1) = self.choose_random_target(agent,type)
+                if(target1 == -1):
+                    return [-1,-1]
+                if(not mode == [] and mode == 4):
+                    return ([target1],[4,action1])
+                else:
+                    return ([target1],[action1])
+
+    def isEmpty(self,node):
+        for i in range(0,self.no_of_players):
+            if(self.detectives[i].position == node):
+                return False
+
+        return True
+
+    def choose_random_target(self,agent,type = "detective"):
+        for i in range(0,10):
+             # Try actions multiple times
+            action = agent.random_action()
+
+            if (action < 0):
+                print("No actions left ")
+                return (-2, -1)
+
+            l = self.board.connections(agent.position)[action]
+
+             #print(action,self.board.connections(agent.position))
+
+            if(l == []):
+                # We retry with a new action
+                continue
+
+            if(type == "x"):
+                for i in range(0,10):
+                    target = random.sample(l, 1)[0]
+                    if(self.isEmpty(target)):
+                        return (target,action)
+
+            else:
+                target = random.sample(l,1)[0]
+                return (target,action)
+
+        print("No empty spot")
+        return (-1,-1)
+
+    def print_pos(self):
+        positions = [x.position for x in self.detectives]
+        positions.append(self.X.position)
+        print("Positions of Detective and X " ,positions)
+        return
+    def reward(self,t):
+        if t=='Detective':
+            m=self.M
+            d=self.detectives
+            l=[]
+            for i in d:
+                min=200
+                for k in m:
+                    c=self.board.shortest_path(i.position,k)
+                    if min<c:
+                        c=min
+                l.add(1/(min+1))
+            return sum(l)
+        if t=='X':
+            X=self.X.position
+            m=self.M
+            min=200
+            for k in m:
+                c=self.board.shortest_path(X,k)
+                if min<c:
+                    c=min
+            return c/20
+        return 0
