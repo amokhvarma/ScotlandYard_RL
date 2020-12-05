@@ -9,7 +9,7 @@ Implemention and analysis of various RL algorithms to play Scotland Yard.
 - [x] Observation Class
 - [x] Sample run of environment
 - [ ] Make a method that returns all possible actions, including targets 
-- [ ] Decide on a reward function. \
+- [ ] Decide on a reward function. 
 
 - [ ] Random policy for X, (Random,MCTS) for detectives 
 - [ ] QNN for X

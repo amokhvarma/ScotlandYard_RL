@@ -31,18 +31,18 @@ class game:
             self.D_reward+=-10
             return self.end_flag
 
-    for i in range(1,self.no_of_players):
+        for i in range(1,self.no_of_players):
 
-        if(self.X.position == self.detectives[i].position):
-            self.end_flag = True
-            self.X_reward+=-10
-            self.D_reward+=10
-            return self.end_flag
-    self.X_reward+=10
-    self.D_reward+=-10
-    self.end_flag = False
+            if(self.X.position == self.detectives[i].position):
+                self.end_flag = True
+                self.X_reward+=-10
+                self.D_reward+=10
+                return self.end_flag
+        self.X_reward+=10
+        self.D_reward+=-10
+        self.end_flag = False
 
-   # Takes action . Target and mode are lists. planning is "random" for now
+# Takes action . Target and mode are lists. planning is "random" for now
     def take_action(self,target,type,mode,index,planning = "None"):
 
         if(type == "detective"):
@@ -62,12 +62,11 @@ class game:
             else:
                 print("Target,Mode : " , target,mode)
                 agent.take_action(target,mode)
-             # Update the observation
+                mode_new = mode
+            # Update the observation
             self.observation.update_observation(type,index,agent)
-            for i in self.detectives:
-                if i.position in self.M:
-                    self.M.remove(i.position)
             self.D_reward+=self.reward('Detective')
+            self.print_reward()
 
         else:
             print("X Cards left : ", self.X.cards)
@@ -75,7 +74,7 @@ class game:
                 (target,mode_new) = self.random_action(type,mode,self.X)
                 # No viable actions
                 if(target == -1):
-                   # Failed moved still counted as move here
+                    # Failed moved still counted as move here
                     self.X.moves+=1
 
                     if(len(mode) > 0 and mode[0]==3):
@@ -90,8 +89,15 @@ class game:
                 self.X.take_action(target, mode_new)
             else:
                 print("Target,Mode : ", target,mode)
+                mode_new = mode
                 self.X.take_action(target,mode)
             self.observation.update_observation(type,index,self.X)
+
+            # ATTENTION : This part is all wrong. You should use mode_new for this. Also mode_new is
+            # is a list and contains possibly multiple elements. I have printed self.M , If your correction works,
+            # self.M will no longer be empty dictionary. Also, remember that X shows himself in some moves. So you have
+            # to empty your self.M
+
             temp={}
             for i in self.M:
                 z=self.board.connections(i)
@@ -109,12 +115,18 @@ class game:
                     temp.remove(i.position)
             self.M=temp
             self.X_reward+=self.reward('X')
+            self.print_reward()
 
-
+        reward = 0
 
         self.move = self.X.moves
 
         self.finish()
+        if(not self.end_flag):
+            for i in self.detectives:
+                if i.position in self.M:
+                    self.M.remove(i.position)
+
         return (self.observation,reward,self.end_flag)
 
     def random_action(self,type,mode,agent):
@@ -154,7 +166,7 @@ class game:
 
     def choose_random_target(self,agent,type = "detective"):
         for i in range(0,10):
-             # Try actions multiple times
+            # Try actions multiple times
             action = agent.random_action()
 
             if (action < 0):
@@ -163,7 +175,7 @@ class game:
 
             l = self.board.connections(agent.position)[action]
 
-             #print(action,self.board.connections(agent.position))
+            #print(action,self.board.connections(agent.position))
 
             if(l == []):
                 # We retry with a new action
@@ -187,6 +199,7 @@ class game:
         positions.append(self.X.position)
         print("Positions of Detective and X " ,positions)
         return
+
     def reward(self,t):
         if t=='Detective':
             m=self.M
@@ -195,18 +208,23 @@ class game:
             for i in d:
                 min=200
                 for k in m:
+                    # Changed this part because you have used shortest_path instead of shortest_path_length
                     c=self.board.shortest_path(i.position,k)
                     if min<c:
                         c=min
-                l.add(1/(min+1))
+                l.append(1/(min+1))
             return sum(l)
         if t=='X':
             X=self.X.position
             m=self.M
             min=200
+            c = 0
             for k in m:
                 c=self.board.shortest_path(X,k)
                 if min<c:
                     c=min
             return c/20
         return 0
+    def print_reward(self):
+        print("Reward collected by X is ", self.X_reward)
+        print("Reward collected by Detective is ",self.D_reward)
