@@ -51,5 +51,5 @@ class graph:
 
     # networkx has inbuilt function for shortest path
     def shortest_path(self,start,target):
-        print("Shortest path ",nx.shortest_path(self.G,start,target))
+        #print("Shortest path ",nx.shortest_path(self.G,start,target))
         return nx.shortest_path_length(self.G,start,target)

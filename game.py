@@ -10,7 +10,7 @@ class game:
 
         self.X = MrX.MrX()
         self.detectives = [detective.detective(i) for i in range(0,n)]
-        for k in range(0,n):
+        for k in range(1,n+1):
             self.M.remove(positions[k])
         self.X.set_position(positions[0])
         for i in range(1,n+1):
@@ -38,8 +38,6 @@ class game:
                 self.X_reward+=-10
                 self.D_reward+=10
                 return self.end_flag
-        self.X_reward+=10
-        self.D_reward+=-10
         self.end_flag = False
 
 # Takes action . Target and mode are lists. planning is "random" for now
@@ -98,29 +96,41 @@ class game:
             # self.M will no longer be empty dictionary. Also, remember that X shows himself in some moves. So you have
             # to empty your self.M
 
-            temp={}
+            temp=set()
             for i in self.M:
                 z=self.board.connections(i)
-                if type=='taxi':
+                if mode_new[0]==0:
                     for j in z[0]:
                         temp.add(j)
-                if type=='bus':
+                if mode_new[0]==1:
                     for j in z[1]:
                         temp.add(j)
-                if type=='underground':
+                if mode_new[0]==2:
                     for j in z[2]:
                         temp.add(j)
+                if mode_new[0]==3:
+                    for j in z[mode_new[1]]:
+                        temp.add(j)
+                    for j in z[mode_new[2]]:
+                        temp.add(j)
+                if mode_new[0]==4:
+                    l=[0,1,2]
+                    for k in l:
+                        for j in z[k]:
+                            temp.add(j)
             for i in self.detectives:
                 if i.position in temp:
                     temp.remove(i.position)
             self.M=temp
-            self.X_reward+=self.reward('X')
+
             self.print_reward()
 
         reward = 0
 
         self.move = self.X.moves
-
+        if self.move in [3,8,13,18,24]:
+            self.M={self.X.position}
+        self.X_reward+=self.reward('X')
         self.finish()
         if(not self.end_flag):
             for i in self.detectives:

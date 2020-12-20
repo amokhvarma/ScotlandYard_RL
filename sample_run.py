@@ -3,13 +3,14 @@ import matplotlib.pyplot as plt
 import game
 
 reward_x = []
-for i in range(0,20):
+for i in range(0,1):
 # Start the run
     G = game.game()
     type = ["detective","x"]
     hide_move = [3,6,9]
     multi_move = [2,7]
     print("\n ################### START GAME ########################################")
+    print(G.M)
     while(not G.finish()):
         move_no = G.move
         print("\nMove No", move_no + 1, "Start -------------------------------------------------------------- \n")
@@ -27,6 +28,7 @@ for i in range(0,20):
             print("Detective ", i, "taking action .. ")
             G.take_action(None,type[0],[],i,"random")
             print("\n")
+        print(G.M)
         G.print_pos()
         print("\nMove No" ,move_no+1, "Over -------------------------------------------------------------- \n")
     reward_x.append(G.X_reward)
@@ -35,7 +37,7 @@ plt.plot(reward_x)
 plt.xlabel("Run")
 plt.ylabel("Reward for X")
 plt.title("Reward for X with Random Policies")
-y_axis = [x for x in range(0,1500,100)]
+y_axis = [x for x in range(-40,40,5)]
 x_axis = [x for x in range(1,21)]
 plt.yticks(y_axis)
 plt.xticks(x_axis)
