@@ -25,6 +25,7 @@ class game:
         return
 
     def finish(self):
+
         if(self.move >= 24):
             self.end_flag = True
             self.X_reward+=10
@@ -38,11 +39,11 @@ class game:
                 self.X_reward+=-10
                 self.D_reward+=10
                 return self.end_flag
-        self.end_flag = False
+        return self.end_flag
 
 # Takes action . Target and mode are lists. planning is "random" for now
     def take_action(self,target,type,mode,index,planning = "None"):
-
+        action_det_reward,action_x_reward = 0,0
         if(type == "detective"):
             agent = self.detectives[index]
 
@@ -63,7 +64,8 @@ class game:
                 mode_new = mode
             # Update the observation
             self.observation.update_observation(type,index,agent)
-            self.D_reward+=self.reward('Detective')
+            action_det_reward = self.reward('Detective')
+            self.D_reward+=action_det_reward
             self.print_reward()
 
         else:
@@ -130,14 +132,16 @@ class game:
         self.move = self.X.moves
         if self.move in [3,8,13,18,24]:
             self.M={self.X.position}
-        self.X_reward+=self.reward('X')
+
+        action_x_reward = self.reward('X')
+        self.X_reward+=action_x_reward
         self.finish()
         if(not self.end_flag):
             for i in self.detectives:
                 if i.position in self.M:
                     self.M.remove(i.position)
 
-        return (self.observation,reward,self.end_flag)
+        return (self.observation,action_det_reward,action_x_reward,self.end_flag)
 
     def random_action(self,type,mode,agent):
         if(type == "detective"):
@@ -200,7 +204,8 @@ class game:
             else:
                 target = random.sample(l,1)[0]
                 return (target,action)
-
+        if(type=="x"):
+            self.end_flag=True
         print("No empty spot")
         return (-1,-1)
 
@@ -220,9 +225,10 @@ class game:
                 for k in m:
                     # Changed this part because you have used shortest_path instead of shortest_path_length
                     c=self.board.shortest_path(i.position,k)
-                    if min<c:
-                        c=min
-                l.append(1/(min+1))
+                    if min>c:
+                        min=c
+                l.append(1/(4*(min+1)))
+            #print(l)
             return sum(l)
         if t=='X':
             X=self.X.position
