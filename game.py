@@ -113,8 +113,12 @@ class game:
                 if mode_new[0]==3:
                     for j in z[mode_new[1]]:
                         temp.add(j)
-                    for j in z[mode_new[2]]:
-                        temp.add(j)
+                    temp1=set()
+                    for e in temp:
+                        z2=self.board.connections(e)
+                        for j in z2[mode_new[2]]:
+                            temp1.add(j)
+                    temp=temp1
                 if mode_new[0]==4:
                     l=[0,1,2]
                     for k in l:
