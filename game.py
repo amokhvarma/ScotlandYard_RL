@@ -1,4 +1,5 @@
 from utilities import *
+import numpy as np
 import random
 from utilities import detective,graph_utils,MrX,observation
 class game:
@@ -7,7 +8,8 @@ class game:
         self.no_of_players = n
         positions = self.board.initial_pos(n+1)
         self.M={13,26,29,34,50,53,91,94,103,112,117,132,138,141,155,174,197,198}
-
+        self.f_x = np.zeros((200))
+        self.f_d = np.zeros((200))
         self.X = MrX.MrX()
         self.detectives = [detective.detective(i) for i in range(0,n)]
         for k in range(1,n+1):
@@ -25,8 +27,15 @@ class game:
         return
 
     def finish(self):
+        if(self.end_flag):
+            return self.end_flag
+        if(len(self.list_of_action_x()) == 0):
+            self.end_flag = True
+            self.X_reward-=10
+            self.D_reward+=10
+            return True
 
-        if(self.move >= 24):
+        if(self.move >= 20):
             self.end_flag = True
             self.X_reward+=10
             self.D_reward+=-10
@@ -54,7 +63,7 @@ class game:
                 # If there is no viable target, action fails.
                 if(target == -1):
                     print("Detective ", index, "Failed ... \n")
-                    return (-1,-1,-1,self.end_flag)
+                    return (-1,-1,0,self.end_flag)
 
                 print("Target,Mode : ",target,mode_new)
                 agent.take_action(target, mode_new)
@@ -66,7 +75,7 @@ class game:
             self.observation.update_observation(type,index,agent)
             action_det_reward = self.reward('Detective')
             self.D_reward+=action_det_reward
-            self.print_reward()
+            #self.print_reward()
 
         else:
             print("X Cards left : ", self.X.cards)
@@ -83,7 +92,7 @@ class game:
                     self.move = self.X.moves
 
                     print("X Failed ..")
-                    return (-1,-1,-1,self.end_flag)
+                    return (-1,0,-1,self.end_flag)
 
                 print("Target/Mode : ", target,mode_new)
                 self.X.take_action(target, mode_new)
@@ -129,7 +138,7 @@ class game:
                     temp.remove(i.position)
             self.M=temp
 
-            self.print_reward()
+            #self.print_reward()
 
         reward = 0
 
@@ -210,6 +219,10 @@ class game:
                 return (target,action)
         if(type=="x"):
             self.end_flag=True
+            self.X_reward-=10
+            self.D_reward+=10
+        else:
+            self.D_reward-=1
         print("No empty spot")
         return (-1,-1)
 
@@ -236,15 +249,23 @@ class game:
             return sum(l)
         if t=='X':
             X=self.X.position
-            m=self.M
+            d=self.detectives
             min=200
             c = 0
-            for k in m:
-                c=self.board.shortest_path(X,k)
-                if min<c:
-                    c=min
-            return c/20
+            for k in d:
+                c=self.board.shortest_path(X,k.position)
+                if min>c:
+                    min=c
+            return min/15
         return 0
     def print_reward(self):
         print("Reward collected by X is ", self.X_reward)
         print("Reward collected by Detective is ",self.D_reward)
+    def return_reward(self):
+        return (self.X_reward,self.D_reward)
+    def list_of_action_x(self):
+        return self.X.list_actions(self.board,self.detectives)
+
+    # TODO: (Shaurya) Updates the feature vector
+    def update(self):
+        return 0
