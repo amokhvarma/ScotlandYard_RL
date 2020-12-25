@@ -6,7 +6,7 @@ class MrX:
     # Each index 4 move has to be accompanied by the actual move.
 
     def __init__(self):
-        self.cards = [10,6,8,2,2]
+        self.cards = [10,6,4,0,2]
         self.previous_move = None
         self.moves = 0
         return
@@ -92,3 +92,24 @@ class MrX:
         if((self.moves + self.cards[3] - 3)%3==0):
             vis = True
         return vis
+    def list_actions(self,board,detectives):
+        connections = board.connections(self.position)
+        action = {}
+        for i in range(0,5):
+            if(self.cards[i]<=0):
+                continue
+            if(i<3):
+                action[i] = []
+                for pos in connections[i]:
+                    if(pos not in det.position for det in detectives):
+                        action[i].append(pos)
+
+                if(len(action[i])==0):
+                    action.pop(i)
+            elif(i==4):
+                action[i] = []
+            else:
+                print("")
+
+        return action
+

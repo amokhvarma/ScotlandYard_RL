@@ -7,6 +7,7 @@ class game:
         self.board = graph_utils.graph()
         self.no_of_players = n
         positions = self.board.initial_pos(n+1)
+        # M is a set , use like for x in M:
         self.M={13,26,29,34,50,53,91,94,103,112,117,132,138,141,155,174,197,198}
         self.f_x = np.zeros((200))
         self.f_d = np.zeros((200))
@@ -50,7 +51,8 @@ class game:
                 return self.end_flag
         return self.end_flag
 
-# Takes action . Target and mode are lists. planning is "random" for now
+# Takes action . Target and mode are lists. planning is "random" for now. Mode = mode of transport, type detective /X
+    # example mode : [4,1] , target [46] means that you take a hidden move and use taxi to go to 46
     def take_action(self,target,type,mode,index,planning = "None"):
         action_det_reward,action_x_reward = 0,0
         if(type == "detective"):
@@ -102,10 +104,6 @@ class game:
                 self.X.take_action(target,mode)
             self.observation.update_observation(type,index,self.X)
 
-            # ATTENTION : This part is all wrong. You should use mode_new for this. Also mode_new is
-            # is a list and contains possibly multiple elements. I have printed self.M , If your correction works,
-            # self.M will no longer be empty dictionary. Also, remember that X shows himself in some moves. So you have
-            # to empty your self.M
 
             temp=set()
             for i in self.M:
@@ -143,7 +141,7 @@ class game:
         reward = 0
 
         self.move = self.X.moves
-        if self.move in [3,8,13,18,24]:
+        if self.move in [3,8,13,18]:
             self.M={self.X.position}
 
         action_x_reward = self.reward('X')
@@ -240,7 +238,6 @@ class game:
             for i in d:
                 min=200
                 for k in m:
-                    # Changed this part because you have used shortest_path instead of shortest_path_length
                     c=self.board.shortest_path(i.position,k)
                     if min>c:
                         min=c
@@ -258,6 +255,7 @@ class game:
                     min=c
             return min/15
         return 0
+
     def print_reward(self):
         print("Reward collected by X is ", self.X_reward)
         print("Reward collected by Detective is ",self.D_reward)
@@ -268,4 +266,5 @@ class game:
 
     # TODO: (Shaurya) Updates the feature vector
     def update(self):
+        # self.f_d[for x in M - 1] = 1.0/len(M)
         return 0

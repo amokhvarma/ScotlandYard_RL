@@ -4,7 +4,7 @@ class detective:
         # Order is Taxi,Bus,Underground
         # self.cards = {"Taxi":10, "Bus":10, "Underground" : 10}. Not initialised as per the game
 
-        self.cards = [11,8,4]
+        self.cards = [10,6,4]
         self.index = index
         self.previous_move = None
 
@@ -15,6 +15,7 @@ class detective:
 
 
     # Move towards the target node number and throw away the respective card
+
     def take_action(self,target,mode):
 
         if(self.cards[mode[0]] > 0 ):
