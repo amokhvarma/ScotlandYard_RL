@@ -92,6 +92,7 @@ class MrX:
         if((self.moves + self.cards[3] - 3)%3==0):
             vis = True
         return vis
+    # action is of format {0:[list of nodes],1:[list], 4:[]} 4 is empty, we can choose from 0,1 and 2 for 4. We skip impossible actions
     def list_actions(self,board,detectives):
         connections = board.connections(self.position)
         action = {}

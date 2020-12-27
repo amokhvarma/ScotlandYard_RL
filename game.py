@@ -30,7 +30,7 @@ class game:
     def finish(self):
         if(self.end_flag):
             return self.end_flag
-        if(len(self.list_of_action_x()) == 0):
+        if(len(self.list_of_action_x()) == 0 or self.list_of_action_x().keys()==[4]):
             self.end_flag = True
             self.X_reward-=10
             self.D_reward+=10
