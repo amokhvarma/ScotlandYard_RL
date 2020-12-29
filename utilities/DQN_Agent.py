@@ -9,11 +9,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from torch.optim.lr_scheduler import StepLR
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
 import math
 
-class GridDataset(Dataset):
+class QDataset(Dataset):
   def __init__(self,x,y):
     s = os.getcwd()
     self.x=x
@@ -49,6 +50,7 @@ class DQN_Agent():
     def __init__(self):
         self.learning_rate = 0.1
         self.epsilon = 0.9
+        self.epoch=1000
         self.no_of_games = 200 # Not sure if we need this
         self.epsilon_decay = (self.epsilon-0.01)/(self.no_of_games)
         self.batch_size = 32
@@ -58,8 +60,8 @@ class DQN_Agent():
         # By [state,action] we mean feature vector. next_state can be an instance of game (deepcopy)
         self.memory = deque(maxlen=1000)
         self.gamma = 0.95 # We can try multiple values if possible i.e
-        self.optimizer = optim.Adadelta(model.parameters(), lr=self.learning_rate)
-        self.scheduler = StepLR(optimizer, step_size=1, gamma=self.gamma)
+        self.optimizer = optim.Adadelta(self.model.parameters(), lr=self.learning_rate)
+        self.scheduler = StepLR(self.optimizer, step_size=1, gamma=self.epsilon_decay)
         self.use_cuda = not no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if use_cuda else "cpu")
         self.kwargs= {'num_workers': 0, 'pin_memory': True} if use_cuda else {}
@@ -109,17 +111,23 @@ class DQN_Agent():
 
 
     def replay(self):
-        '''mini_batch = random.sample(self.memory,self.batch_size,type="x")
+        mini_batch = random.sample(self.memory,self.batch_size,type="x")
+        x=[]
+        y=[]
         for (state_action,next_state,reward) in mini_batch:
             if(next_state.end_flag):
                 target = next_state.X_reward
             else:
                 _,max_rew = self.best_action(next_state,type)
-                target = reward + self.gamma*max_rew'''
+                target = reward + self.gamma*max_rew
+            x.append(state_action)
+            y.append(target)
+        x=np.asarray(x)
+        y=np.asarray(y)
         #Assuming I have x,y np arrays with test data
-        data=torch.utils.data.DataLoader(DataLoader(x,y),batch_size=self.batch_size,shuffle=True, **self.kwargs)
+        data=torch.utils.data.DataLoader(QDataset(x,y),batch_size=y.size,shuffle=True, **self.kwargs)
             # TODO : Ayush (.fit trains the file)
-        train(10,self.model,self.device,data,self.optimizer,self.epoch)
+        train(1,self.model,self.device,data,self.optimizer,self.epoch)
 
 
 
