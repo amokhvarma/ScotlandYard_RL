@@ -1,6 +1,33 @@
 #import pytorch as torch
 import random
 from collections import deque
+import numpy as np
+import cv2
+import os
+import random
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from torch.autograd import Variable
+from torch.utils.data import Dataset, DataLoader
+import math
+
+class GridDataset(Dataset):
+  def __init__(self,x,y):
+    s = os.getcwd()
+    self.x=x
+    self.y=y
+    #self.x=np.load(type+"_data.npy", allow_pickle=True)
+    #self.y=np.load(type+'_label.npy',allow_pickle=True)
+    self.x=torch.from_numpy(self.x).float()
+    self.y=torch.from_numpy(self.y).float()
+
+  def __getitem__(self,index):
+    return self.x[index], self.y[index]
+  def __len__(self):
+    return self.x.shape[0]
+
 # Convert list of actions to form (action,target)
 def convert_from_dict(list_of_actions):
     l = []
@@ -30,12 +57,15 @@ class DQN_Agent():
         # Each element of memory is ([state,action],next_state,reward) format.
         # By [state,action] we mean feature vector. next_state can be an instance of game (deepcopy)
         self.memory = deque(maxlen=1000)
-        self.gamma = 0.95 # We can try multiple values if possible i.e.
-
-
+        self.gamma = 0.95 # We can try multiple values if possible i.e
+        self.optimizer = optim.Adadelta(model.parameters(), lr=self.learning_rate)
+        self.scheduler = StepLR(optimizer, step_size=1, gamma=self.gamma)
+        self.use_cuda = not no_cuda and torch.cuda.is_available()
+        self.device = torch.device("cuda" if use_cuda else "cpu")
+        self.kwargs= {'num_workers': 0, 'pin_memory': True} if use_cuda else {}
     def build_model(self):
         # TODO:Ayush Build model here
-        model = 0
+        model = X_net()
         return model
 
     def add_to_memory(self,state_action,next_state,reward):
@@ -69,7 +99,7 @@ class DQN_Agent():
             feature = game.f_x_action(act_tar)
 
             #  TODO:Ayush Make this correct
-            val = self.model.predict(feature)
+            val = self.model.forward(feature)
 
             if (val > max_reward):
                 max_reward = val
@@ -79,18 +109,19 @@ class DQN_Agent():
 
 
     def replay(self):
-        mini_batch = random.sample(self.memory,self.batch_size,type="x")
+        '''mini_batch = random.sample(self.memory,self.batch_size,type="x")
         for (state_action,next_state,reward) in mini_batch:
             if(next_state.end_flag):
                 target = next_state.X_reward
             else:
                 _,max_rew = self.best_action(next_state,type)
-                target = reward + self.gamma*max_rew
-
+                target = reward + self.gamma*max_rew'''
+        #Assuming I have x,y np arrays with test data
+        data=torch.utils.data.DataLoader(DataLoader(x,y),batch_size=self.batch_size,shuffle=True, **self.kwargs)
             # TODO : Ayush (.fit trains the file)
-            self.model.fit(state_action,target,epochs=1,verbose=0)
+        train(10,self.model,self.device,data,self.optimizer,self.epoch)
 
-        self.epsilon = self.epsilon*self.epsilon_decay
+
 
     # TODO: Save and load to self.model
 
@@ -100,6 +131,26 @@ class DQN_Agent():
     def load_model(self,path):
         return None
 
+def train(log_interval, model, device, train_loader, optimizer, epoch):
+    model.train()
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data, target = data.to(device), target.to(device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = F.mse_loss(output, target)
+        loss.backward()
+        optimizer.step()
+        if batch_idx % log_interval == 0:
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                epoch, batch_idx * len(data), len(train_loader.dataset),
+                100. * batch_idx / len(train_loader), loss.item()))
+def test(model, device, test_loader):
+    model.eval()
+    test_loss = 0
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            test_loss += F.mse_loss(output, target, reduction='sum').item()  # sum up batch loss
 
-
-
+    test_loss /= len(test_loader.dataset)
