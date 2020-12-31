@@ -316,6 +316,7 @@ class game:
         # X
         self.f_x[0][0:199] = to_onehot(self.X.position, 199)
         self.f_x[0][199:204] = self.X.cards
+        n = self.no_of_players
         for i in range(0, n):
             j = 204
             self.f_x[0][j:(j + 199)] = to_onehot(self.detectives[i].position, 199)
@@ -352,6 +353,19 @@ class game:
     # TODO :
     # action format (0,20) or (1,20) or (2,20) or (4,1,20) or (4,2,20) so on . Total poss : ( 3 + 3 )*199
     def f_x_action(self,action):
-        return None
+        action_list = [0,0,0,0,0,0]
+        target = [0 for i in range(0,199)]
+        if(action[0] == 4):
+            action_list[3+action[1]]=1
+            target[action[2]-1]=1
+        else:
+            action_list[action[0]]=1
+            target[action[1]-1]=1
+        temp = np.zeros((1,1032+6+199))
+        temp[0][0:1032] = self.f_x
+        temp[0][1032:1038] = action_list
+        temp[0][1038:1038+199] = target
+
+        return temp
     def f_d_action(self,action):
         return None

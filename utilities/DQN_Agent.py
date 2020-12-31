@@ -2,7 +2,7 @@
 import random
 from collections import deque
 import numpy as np
-import cv2
+#import cv2
 import os
 import random
 import torch
@@ -12,6 +12,7 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import StepLR
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
+from utilities.X_net import X_net
 import math
 
 class QDataset(Dataset):
@@ -62,9 +63,10 @@ class DQN_Agent():
         self.gamma = 0.95 # We can try multiple values if possible i.e
         self.optimizer = optim.Adadelta(self.model.parameters(), lr=self.learning_rate)
         self.scheduler = StepLR(self.optimizer, step_size=1, gamma=self.epsilon_decay)
-        self.use_cuda = not no_cuda and torch.cuda.is_available()
-        self.device = torch.device("cuda" if use_cuda else "cpu")
-        self.kwargs= {'num_workers': 0, 'pin_memory': True} if use_cuda else {}
+        self.no_cuda = True
+        self.use_cuda = not self.no_cuda and torch.cuda.is_available()
+        self.device = torch.device("cuda" if self.use_cuda else "cpu")
+        self.kwargs= {'num_workers': 0, 'pin_memory': True} if self.use_cuda else {}
     def build_model(self):
         # TODO:Ayush Build model here
         model = X_net()

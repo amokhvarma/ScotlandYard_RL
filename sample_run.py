@@ -6,7 +6,7 @@ from utilities import mcts
 #
 
 reward_x,victory = [],0
-for i in range(0,100):
+for i in range(0,1):
 # Start the run
     G = game.game()
     type = ["detective","x"]
@@ -32,7 +32,8 @@ for i in range(0,100):
             print("Detective ", i, "taking action .. ")
             (_,rew,_,_)=G.take_action(None,type[0],[],i,"random")
             print("\n")
-        print(G.M)
+        G.update_fv()
+        print(G.f_x_action((2,24)).shape)
         G.print_pos()
         G.print_reward()
         if(move_no >= 19):
