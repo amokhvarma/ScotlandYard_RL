@@ -39,7 +39,7 @@ for i in range(0,1):
         if(move_no >= 19):
             victory+=1
         print("\nMove No" ,move_no+1, "Over -------------------------------------------------------------- \n")
-    reward_x.append(G.X_reward)
+        reward_x.append(G.X_reward)
 print(victory,np.mean(reward_x))
 plt.plot(reward_x)
 plt.xlabel("Run")
