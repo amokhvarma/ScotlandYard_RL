@@ -5,8 +5,8 @@ from utilities.DQN_Agent import DQN_Agent
 from game import game
 
 
-playouts = sys.argv[1]
-lr = sys.argv[2]
+playouts = int(sys.argv[1])
+lr = int(sys.argv[2])
 iter = 1
 X_agent = DQN_Agent(lr)
 total_steps = 0
