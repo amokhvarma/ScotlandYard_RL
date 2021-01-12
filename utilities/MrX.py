@@ -97,6 +97,8 @@ class MrX:
 		connections = board.connections(self.position)
 		action = {}
 		for i in range(0,5):
+			if(i==4 and len(action)==0):
+				break
 			if(self.cards[i]<=0):
 				continue
 			if(i<3):
