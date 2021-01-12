@@ -1,12 +1,14 @@
 import torch
 from copy import deepcopy
-
+import sys
 from utilities.DQN_Agent import DQN_Agent
 from game import game
 
-playouts = 7
+
+playouts = sys.argv[1]
+lr = sys.argv[2]
 iter = 1
-X_agent = DQN_Agent()
+X_agent = DQN_Agent(lr)
 total_steps = 0
 while(iter<=playouts):
     G = game()

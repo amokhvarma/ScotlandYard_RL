@@ -53,8 +53,8 @@ def convert_from_dict(list_of_actions):
 
 class DQN_Agent():
 
-    def __init__(self):
-        self.learning_rate = 0.1
+    def __init__(self,lr):
+        self.learning_rate = lr
         self.loss = []
         self.epsilon = 0.9
         self.epoch = 1
