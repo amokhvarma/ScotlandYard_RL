@@ -3,10 +3,12 @@ from copy import deepcopy
 import sys
 from utilities.DQN_Agent import DQN_Agent
 from game import game
-
+import time
 
 playouts = int(sys.argv[1])
-lr = int(sys.argv[2])
+model_name = "X_DQNN"
+lr = float(sys.argv[2])
+
 iter = 1
 X_agent = DQN_Agent(lr)
 total_steps = 0
@@ -42,6 +44,8 @@ while(iter<=playouts):
             print("Replaying ... ")
             X_agent.replay()
     iter+=1
+    if(iter%2000== 0):
+        X_agent.save_model("Model/"+model_name)
     G.print_pos()
 print(len(X_agent.memory),X_agent.loss)
 
