@@ -4,11 +4,12 @@ import sys
 from utilities.DQN_Agent import DQN_Agent
 from game import game
 import time
-
+import matplotlib.pyplot as plt
 playouts = int(sys.argv[1])
 model_name = "X_DQNN"
 lr = float(sys.argv[2])
-
+surv = []
+win_rate = []
 iter = 1
 X_agent = DQN_Agent(lr)
 total_steps = 0
@@ -44,8 +45,27 @@ while(iter<=playouts):
             print("Replaying ... ")
             X_agent.replay()
     iter+=1
+    if(G.move>=20):
+        surv.append(1)
+    else:
+        surv.append(0)
+    win_rate.append(sum(surv)/len(surv))
     if(iter%2000== 0):
         X_agent.save_model("Model/"+model_name)
-    G.print_pos()
-print(len(X_agent.memory),X_agent.loss)
+        plot1 = plt.figure(1)
+        plt.plot(X_agent.loss)
+        plt.title("Loss vs Episodes")
+        plt.xlabel("Episode")
+        plt.ylabel("MSE Loss in Q value")
+        plt.savefig("Result/loss.png")
 
+        plot2 = plt.figure(2)
+        plt.title("Win rate vs Episodes")
+        plt.xlabel("Episode")
+        plt.ylabel("Win rate ")
+
+        plt.plot(win_rate)
+        plt.savefig("Result/win_rate.png")
+
+    G.print_pos()
+print(len(X_agent.memory))
