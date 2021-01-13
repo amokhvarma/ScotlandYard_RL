@@ -312,6 +312,11 @@ class game:
     def list_of_action_x(self):
         return self.X.list_actions(self.board, self.detectives)
 
+    def list_of_action_d(self):
+        l=[]
+        for i in range(4):
+            l.append(self.detectives[i].list_actions(self.board,self.detectives))
+        return l
     # TODO: (Shaurya) Updates the feature vector
     def update_fv(self):
         # X
@@ -368,14 +373,15 @@ class game:
         temp[0][1038:1038 + 199] = target
         return temp
 
-    def f_d_action(self, action, index):
-        action_list = [0, 0, 0]
-        target = np.zeros(199)
-        action_list[action[0]] = 1
-        target[action[1] - 1] = 1
+    def f_d_action(self, action):
         num = self.no_of_players
         temp = np.zeros((1, 1008 + (3 * num) + (199 * num)))
         temp[0][0:1008 + (3 * num) + (199 * num)] = self.f_d
-        temp[0][1008 + (index * 3):1008 + (index + 1) * 3] = action_list
-        temp[0][1008 + (3 * num) + (index * 199):1008 + (3 * num) + (index + 1) * 199] = target
+        for index in range(num):
+            action_list = [0, 0, 0]
+            target = np.zeros(199)
+            action_list[action[0][index]] = 1
+            target[action[1][index] - 1] = 1
+            temp[0][1008 + (index * 3):1008 + (index + 1) * 3] = action_list
+            temp[0][1008 + (3 * num) + (index * 199):1008 + (3 * num) + (index + 1) * 199] = target
         return temp
