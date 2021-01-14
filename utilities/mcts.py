@@ -20,12 +20,13 @@ def convert_to_dict(list_of_actions):
     return l
 
 class Node:
-    def __init__(self,game=None,parent=None):
+    def __init__(self,game=None,c=2,parent=None):
         self.visits=0
         self.reward=0
         self.child = None
         self.parent = parent
         self.game=game
+        self.c = c
 
     def set_state(self,game):
         self.game=game
@@ -61,7 +62,7 @@ class Node:
         print(list_of_actions)
         dict_of_actions = convert_to_dict(list_of_actions)
         val,action = -100,None
-        c,N = 2,self.visits
+        c,N = self.c ,self.visits
         for key in self.child.keys():
             if(key not in dict_of_actions):
                 continue
@@ -82,10 +83,12 @@ class Node:
         return action
 
 class mcts:
-    def __init__(self,game,agent=None):
+    def __init__(self, game, c=2, playouts=10, agent=None):
         self.game = copy.deepcopy(game)
+        self.c = c
         print("Monte Carlo Tree Search for X ")
-        self.root = Node(self.game)
+        self.root = Node(self.game, self.c)
+        self.playouts = playouts
 
     def best_action(self):
         max_rew,best_action,target = -200,None,None
@@ -109,8 +112,8 @@ class mcts:
             return (best_action,target)
 
     def planning(self):
-        playouts = 10
-        for temp in range(0,playouts):
+        # playouts = 10
+        for temp in range(0,self.playouts):
             print("\n Playout Number : ", temp)
             iter_node = self.root
 
