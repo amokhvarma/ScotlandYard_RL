@@ -13,9 +13,9 @@ import os
 #import cv2
 import random
 
-class X_net(nn.Module):
+class D_net(nn.Module):
     def __init__(self):
-        super(X_net, self).__init__()
+        super(D_net, self).__init__()
         self.fc1 = nn.Linear(1008 + (3 * 4) + (199 * 4), 512)
         self.fc2 = nn.Linear(512, 256)
         self.fc3 = nn.Linear(256,128)

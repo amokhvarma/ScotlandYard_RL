@@ -105,7 +105,7 @@ class game:
         if (type == "detective"):
             agent = self.detectives[index]
 
-            print("Detective ", index, " Cards left : ", agent.cards)
+           # print("Detective ", index, " Cards left : ", agent.cards)
 
             if (planning == "random"):
                 (target, mode_new) = self.random_action(type, mode, agent)
@@ -114,10 +114,10 @@ class game:
                     print("Detective ", index, "Failed ... \n")
                     return (-1, -1, 0, self.end_flag)
 
-                print("Target,Mode : ", target, mode_new)
+                #print("Target,Mode : ", target, mode_new)
                 agent.take_action(target, mode_new)
             else:
-                print("Target,Mode : ", target, mode)
+                #print("Target,Mode : ", target, mode)
                 agent.take_action(target, mode)
                 mode_new = mode
             # Update the observation
@@ -127,7 +127,7 @@ class game:
         # self.print_reward()
 
         else:
-            print("X Cards left : ", self.X.cards)
+            #print("X Cards left : ", self.X.cards)
             if (planning == "random"):
                 (target, mode_new) = self.random_action(type, mode, self.X)
                 # No viable actions
@@ -143,10 +143,10 @@ class game:
                     print("X Failed ..")
                     return (-1, 0, -1, self.end_flag)
 
-                print("Target/Mode : ", target, mode_new)
+                #print("Target/Mode : ", target, mode_new)
                 self.X.take_action(target, mode_new)
             else:
-                print("Target,Mode : ", target, mode)
+             #   print("Target,Mode : ", target, mode)
                 mode_new = mode
                 self.X.take_action(target, mode)
             self.observation.update_observation(type, index, self.X)
@@ -241,7 +241,7 @@ class game:
             action = agent.random_action()
 
             if (action < 0):
-                print("No actions left ")
+                #print("No actions left ")
                 return (-2, -1)
 
             l = self.board.connections(agent.position)[action]

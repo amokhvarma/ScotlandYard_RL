@@ -53,7 +53,7 @@ def convert_from_dict(list_of_actions):
 
 class DQN_Agent():
 
-    def __init__(self,lr):
+    def __init__(self,lr=1):
         self.learning_rate = lr
         self.loss = []
         self.epsilon = 0.9
@@ -66,9 +66,9 @@ class DQN_Agent():
         # Each element of memory is ([state,action],next_state,reward) format.
         # By [state,action] we mean feature vector. next_state can be an instance of game (deepcopy)
         self.memory = deque(maxlen=1000)
-        self.gamma = 0.95  # We can try multiple values if possible i.e
+        self.gamma = 1  # We can try multiple values if possible i.e
         self.optimizer = optim.Adadelta(self.model.parameters(), lr=self.learning_rate)
-        self.scheduler = StepLR(self.optimizer, step_size=1, gamma=self.epsilon_decay)
+        self.scheduler = StepLR(self.optimizer, step_size=1, gamma=1)
         self.no_cuda = True
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
@@ -140,6 +140,8 @@ class DQN_Agent():
         # TODO : Ayush (.fit trains the file)
         self.loss.append(train(1, self.model, self.device, data, self.optimizer, self.epoch))
         self.epoch += 1
+        self.epsilon -= self.epsilon*self.epsilon_decay
+        print("Exploration : ",self.epsilon)
 
     # TODO: Save and load to self.model
 
@@ -148,6 +150,8 @@ class DQN_Agent():
         return None
 
     def load_model(self, path):
+        self.model = torch.load(path)
+        print("Load Success")
         return None
 
 def train(log_interval, model, device, train_loader, optimizer, epoch):

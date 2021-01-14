@@ -11,7 +11,7 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import StepLR
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
-from utilities.X_net import X_net
+from utilities.D_net import D_net
 import math
 
 glob_loss = []
@@ -88,7 +88,7 @@ class DQN_Det():
             else:
                 act=[]
                 list_act = convert_from_dict(action)
-                act=random.sample(list_act, 1)[0])=
+                act=random.sample(list_act, 1)[0]
 
             return act
 
