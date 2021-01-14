@@ -6,11 +6,11 @@ import game
 from utilities import mcts
 
 try:
-	c = sys.argv[1]
+	c = int(sys.argv[1])
 except:
 	c = 2
 try:	
-	playouts = sys.argv[2]
+	playouts = int(sys.argv[2])
 except:
 	playouts = 10
 	
