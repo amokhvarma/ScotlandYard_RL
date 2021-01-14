@@ -21,6 +21,12 @@ class X_net(nn.Module):
         self.fc3 = nn.Linear(256,128)
         self.fc4 = nn.Linear(128,1)
 
+        #self.fc2 = nn.Linear(512, 128)
+        #self.fc3 = nn.Linear(128, 1)
+
+
+
+
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
