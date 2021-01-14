@@ -126,7 +126,7 @@ class mcts:
                 iter_node.child[action].set_state(next_state)
 
                 iter_node = iter_node.child[action]
-            print(iter_node.parent==self.root)
+            # print(iter_node.parent==self.root)
             # Expand Node :-
             if(not iter_node.game.finish()):
                 iter_node.child_init()
@@ -134,7 +134,7 @@ class mcts:
                 if(not rand_action==None):
                     iter_node.child[rand_action].set_state(iter_node.simulate_one_step(rand_action))
                     iter_node = iter_node.child[rand_action]
-            print(iter_node.parent.parent==self.root)
+            # print(iter_node.parent.parent==self.root)
             # Two possibilities : node cannot be expanded / can be expanded
             reward = self.simulate(iter_node)
 
