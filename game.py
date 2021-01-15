@@ -78,7 +78,7 @@ class game:
             return self.end_flag
         if (len(self.list_of_action_x()) == 0):
             self.end_flag = True
-            print("No moves left for X : ")
+            #print("No moves left for X : ")
             self.X_reward -= 10
             self.D_reward += 10
             return True

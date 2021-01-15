@@ -58,9 +58,9 @@ class DQN_Det():
         self.loss = []
         self.epsilon = 0.9
         self.epoch = 1
-        self.no_of_games = 8000  # Not sure if we need this
-        self.epsilon_decay = math.exp((self.epsilon - 0.01) / (self.no_of_games))
-        self.batch_size = 128
+        self.no_of_games = 100 # Not sure if we need this
+        self.epsilon_decay = (self.epsilon - 0.01) / (self.no_of_games)
+        self.batch_size = 32
         self.model = self.build_model()
         self.input_size = 1000  # TODO: We will update this
         # Each element of memory is ([state,action],next_state,reward) format.
@@ -90,14 +90,14 @@ class DQN_Det():
                 return
             else:
                 act=[]
-                print(action)
+                #print(action)
                 list_act = convert_from_dict(action)
                 act=random.sample(list_act, 1)[0]
-                print(act)
+                #print(act)
             return act
 
         else:
-            print("Exploitation ... ")
+            #print("Exploitation ... ")
             (act, _) = self.best_action(game)
             return act
 

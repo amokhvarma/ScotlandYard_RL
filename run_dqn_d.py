@@ -18,7 +18,7 @@ while(iter<=playouts):
     G = game()
     step_rew,rew=0,0
     while(not G.finish()):
-        print("Move No ", G.move ,iter)
+        #print("Move No ", G.move ,iter)
         #print(G.list_of_action_x())
         act = D_agent.train_action(G)
         state_action = G.f_d_action(act)
@@ -33,10 +33,11 @@ while(iter<=playouts):
         next_state = deepcopy(G)
 
         D_agent.add_to_memory(state_action,next_state,step_rew)
-        print(rew,step_rew)
+        #print(rew,step_rew)
         if(total_steps%D_agent.batch_size == 0):
             print("Replaying ... ")
             D_agent.replay()
+    print(iter)
     iter+=1
     if(G.move>=20):
         surv.append(0)
@@ -46,12 +47,12 @@ while(iter<=playouts):
     if(iter%playouts== 0):
         D_agent.save_model("Model/"+model_name)
         plot1 = plt.figure(1)
-        print(D_agent.loss)
+        #print(D_agent.loss)
         plt.plot(D_agent.loss)
         plt.title("Loss vs Episodes")
         plt.xlabel("Episode")
         plt.ylabel("MSE Loss in Q value")
-        plt.savefig("Result\\loss_D.png")
+        plt.savefig("Result\\loss_D1.png")
 
         plot2 = plt.figure(2)
         plt.title("Win rate vs Episodes")
@@ -59,7 +60,7 @@ while(iter<=playouts):
         plt.ylabel("Win rate ")
 
         plt.plot(win_rate)
-        plt.savefig("Result\\win_rate_D.png")
+        plt.savefig("Result\\win_rate_D1.png")
 
-    G.print_pos()
+    #G.print_pos()
 print(len(D_agent.memory),D_agent.loss)

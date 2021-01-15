@@ -97,7 +97,7 @@ class DQN_Agent():
             return act
 
         else:
-            print("Exploitation ... ")
+            #print("Exploitation ... ")
             (act, _) = self.best_action(game, type)
             return act
 

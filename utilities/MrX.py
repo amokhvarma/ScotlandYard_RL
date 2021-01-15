@@ -13,7 +13,7 @@ class MrX:
 
 	def set_position(self,node_number):
 		self.position = node_number
-		print("X moved to " , node_number)
+		#print("X moved to " , node_number)
 		return
 
 	# Move towards the target node number and throw away the respective card
@@ -66,7 +66,7 @@ class MrX:
 		else:
 			print("Not enough Tickets left")
 			return -1
-		return 1            
+		return 1
 
 	# For random action as baseline
 	def random_action(self):
@@ -115,5 +115,3 @@ class MrX:
 				print("")
 
 		return action
-
-
