@@ -35,15 +35,18 @@ class QDataset(Dataset):
 # Convert list of actions to form (action,target)
 def convert_from_dict(list_of_actions):
     l = []
-    for key0 in list_of_actions[0].keys():
-        for pos0 in list_of_actions[0][key]:
-            for key1 in list_of_actions[1].keys():
-                for pos1 in list_of_actions[1][key]:
-                    for key2 in list_of_actions[2].keys():
-                        for pos2 in list_of_actions[2][key]:
-                            for key3 in list_of_actions[3].keys():
-                                for pos3 in list_of_actions[3][key]:
-                                    l.append(((key0,key1,key2,key3), (pos0,pos1,pos2,pos3)))
+    li = [[],[],[],[]]
+    for i in range(4):
+        if len(list_of_actions[i].keys())==0:
+            li[i].append([None,None])
+        for key in list_of_actions[i].keys():
+            for pos in list_of_actions[i][key]:
+                li[i].append([key,pos])
+    for a in li[0]:
+        for b in li[1]:
+            for c in li[2]:
+                for d in li[3]:
+                    l.append([[a[0],b[0],c[0],d[0]],[a[1],b[1],c[1],d[1]]])
 
     return l
 
@@ -56,8 +59,8 @@ class DQN_Det():
         self.epsilon = 0.9
         self.epoch = 1
         self.no_of_games = 8000  # Not sure if we need this
-        self.epsilon_decay = (self.epsilon - 0.01) / (self.no_of_games)
-        self.batch_size = 32
+        self.epsilon_decay = math.exp((self.epsilon - 0.01) / (self.no_of_games))
+        self.batch_size = 128
         self.model = self.build_model()
         self.input_size = 1000  # TODO: We will update this
         # Each element of memory is ([state,action],next_state,reward) format.
@@ -65,7 +68,7 @@ class DQN_Det():
         self.memory = deque(maxlen=1000)
         self.gamma = 0.95  # We can try multiple values if possible i.e
         self.optimizer = optim.Adadelta(self.model.parameters(), lr=self.learning_rate)
-        self.scheduler = StepLR(self.optimizer, step_size=1, gamma=self.epsilon_decay)
+        self.scheduler = StepLR(self.optimizer, step_size=1, gamma=1)
         self.no_cuda = True
         self.use_cuda = not self.no_cuda and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
@@ -87,9 +90,10 @@ class DQN_Det():
                 return
             else:
                 act=[]
+                print(action)
                 list_act = convert_from_dict(action)
                 act=random.sample(list_act, 1)[0]
-
+                print(act)
             return act
 
         else:
@@ -112,8 +116,8 @@ class DQN_Det():
             val = self.model.forward(feature_tensor.float()).detach().numpy()[0][0]
 
             if (val > max_reward):
-                max_reward[i]=val
-                act.append(act_tar)
+                max_reward=val
+                act=act_tar
 
         return (act, max_reward)
 
@@ -136,6 +140,9 @@ class DQN_Det():
         # TODO : Ayush (.fit trains the file)
         self.loss.append(train(1, self.model, self.device, data, self.optimizer, self.epoch))
         self.epoch += 1
+        self.epsilon -= self.epsilon*self.epsilon_decay
+        print("Exploration : ",self.epsilon)
+
     def save_model(self, path):
         torch.save(self.model,path)
         return None
