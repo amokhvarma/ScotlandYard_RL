@@ -93,19 +93,30 @@ class mcts:
     def best_action(self):
         max_rew,best_action,target = -200,None,None
         list_of_keys =  convert_to_dict(self.root.game.list_of_action_x())
+        hiddenlist = [3,8,13,18]
         #print(list_of_keys)
         print([(self.root.child[key].reward,self.root.child[key].visits,key) for key in self.root.child.keys() if not self.root.child[key].reward==0])
         for key in self.root.child.keys():
             if(key not in list_of_keys):
                 continue
-            if(self.root.child[key].reward > max_rew):
-                max_rew = self.root.child[key].reward
+            if(self.game.move in hiddenlist):
+                if(self.root.child[key].reward > max_rew):
+                    max_rew = self.root.child[key].reward
 
-                best_action = [key[0]]
-                target = [key[1]]
-                if(best_action == [4]):
-                    best_action = [key[0],key[1]]
-                    target = [key[2]]
+                    best_action = [key[0]]
+                    target = [key[1]]
+                    if(best_action == [4]):
+                        best_action = [key[0],key[1]]
+                        target = [key[2]]
+            else:
+                if(self.root.child[key].reward > max_rew and [key[0]]!=[4]):
+                    max_rew = self.root.child[key].reward
+
+                    best_action = [key[0]]
+                    target = [key[1]]
+                    # if(best_action == [4]):
+                    #     best_action = [key[0],key[1]]
+                    #     target = [key[2]]
         if(best_action == None):
             return (-1,-1)
         else:
@@ -126,7 +137,7 @@ class mcts:
                 iter_node.child[action].set_state(next_state)
 
                 iter_node = iter_node.child[action]
-            # print(iter_node.parent==self.root)
+            print(iter_node.parent==self.root)
             # Expand Node :-
             if(not iter_node.game.finish()):
                 iter_node.child_init()
@@ -134,7 +145,7 @@ class mcts:
                 if(not rand_action==None):
                     iter_node.child[rand_action].set_state(iter_node.simulate_one_step(rand_action))
                     iter_node = iter_node.child[rand_action]
-            # print(iter_node.parent.parent==self.root)
+            print(iter_node.parent.parent==self.root)
             # Two possibilities : node cannot be expanded / can be expanded
             reward = self.simulate(iter_node)
 
