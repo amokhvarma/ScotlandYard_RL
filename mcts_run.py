@@ -52,10 +52,10 @@ for i in range(0,len(playouts)):
 				target = [act[1]]
 			G.take_action(target,"x",mode,0)
 			total_steps+=1
-			print("\n")
+			# print("\n")
 			for j in range(G.no_of_players):
 				G.take_action(None,"detective",[],j,"random")
-				print("\n")
+				# print("\n")
 			G.update_fv()
 			step_rew = G.X_reward-rew
 			rew = G.X_reward
@@ -67,7 +67,7 @@ for i in range(0,len(playouts)):
 			surv.append(0)
 		win_rate.append(sum(surv)/float(len(surv)))
 		rew_list.append(rew/float(len(surv)))
-		if(itr//runs == 1):
+		if(itr%100 == 0):
 			plot1 = plt.figure(1)
 			plt.title("Win rate vs Episodes")
 			plt.xlabel("Episode")

@@ -111,7 +111,7 @@ class game:
                 (target, mode_new) = self.random_action(type, mode, agent)
                 # If there is no viable target, action fails.
                 if (target == -1):
-                    print("Detective ", index, "Failed ... \n")
+                    # print("Detective ", index, "Failed ... \n")
                     return (-1, -1, 0, self.end_flag)
 
                 #print("Target,Mode : ", target, mode_new)
@@ -140,7 +140,7 @@ class game:
 
                     self.move = self.X.moves
 
-                    print("X Failed ..")
+                    # print("X Failed ..")
                     return (-1, 0, -1, self.end_flag)
 
                 #print("Target/Mode : ", target, mode_new)
@@ -267,7 +267,7 @@ class game:
             self.D_reward += 10
         else:
             self.D_reward -= 1
-        print("No empty spot")
+        # print("No empty spot")
         return (-1, -1)
 
     def print_pos(self):
