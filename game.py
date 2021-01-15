@@ -78,7 +78,7 @@ class game:
             return self.end_flag
         if (len(self.list_of_action_x()) == 0):
             self.end_flag = True
-            print("No moves left for X : ")
+            #print("No moves left for X : ")
             self.X_reward -= 10
             self.D_reward += 10
             return True
@@ -380,8 +380,9 @@ class game:
         for index in range(num):
             action_list = [0, 0, 0]
             target = np.zeros(199)
-            action_list[action[0][index]] = 1
-            target[action[1][index] - 1] = 1
+            if action[0][index]!=None:
+                action_list[action[0][index]] = 1
+                target[action[1][index] - 1] = 1
             temp[0][1008 + (index * 3):1008 + (index + 1) * 3] = action_list
             temp[0][1008 + (3 * num) + (index * 199):1008 + (3 * num) + (index + 1) * 199] = target
         return temp

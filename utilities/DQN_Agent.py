@@ -58,7 +58,7 @@ class DQN_Agent():
         self.loss = []
         self.epsilon = 0.9
         self.epoch = 1
-        self.no_of_games = 20000  # Not sure if we need this
+        self.no_of_games = 8000  # Not sure if we need this
         self.epsilon_decay = (self.epsilon - 0.01) / (self.no_of_games)
         self.batch_size = 32
         self.model = self.build_model()
@@ -97,7 +97,7 @@ class DQN_Agent():
             return act
 
         else:
-            print("Exploitation ... ")
+            #print("Exploitation ... ")
             (act, _) = self.best_action(game, type)
             return act
 

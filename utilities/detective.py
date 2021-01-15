@@ -13,7 +13,7 @@ class detective:
     # We can change to node object if necessary
     def set_position(self, node_number):
         self.position = node_number
-        print("Detective ", self.index, "moved to ", node_number)
+        #print("Detective ", self.index, "moved to ", node_number)
 
     # Move towards the target node number and throw away the respective card
 

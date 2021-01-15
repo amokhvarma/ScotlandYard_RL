@@ -6,9 +6,15 @@ from game import game
 import time
 import matplotlib.pyplot as plt
 
+def mean(x):
+    return sum(x)/len(x)
+
 playouts = 500
-model_name = "X_DQNN_1.0"
+model_name = sys.argv[1]
 surv = []
+X_reward = []
+avg_x,avg_det = [],[]
+det_reward = []
 win_rate = []
 iter = 1
 X_agent = DQN_Agent()
@@ -48,13 +54,27 @@ while (iter <= playouts):
         surv.append(1)
     else:
         surv.append(0)
+
     win_rate.append(sum(surv) / len(surv))
+    X_reward.append(G.X_reward)
+    det_reward.append(G.D_reward/4)
+    avg_x.append(mean(X_reward))
+    avg_det.append(mean(det_reward))
 
 plot1 = plt.figure(1)
 
 plt.title("Win rate vs Episodes")
 plt.xlabel("Episode")
 plt.ylabel("Win rate ")
-
 plt.plot(win_rate)
-plt.savefig("Result/win_rate_x_dqnn_test_1.0.png")
+plt.savefig("Result/win_rate_"+sys.argv[1]+".png")
+
+plot2 = plt.figure(2)
+plt.title("X Reward vs Episodes")
+plt.xlabel("Episode")
+plt.ylabel("Reward ")
+plt.plot(avg_x)
+plt.plot(avg_det)
+plt.legend(["X","Detectives"])
+plt.savefig("Result/reward_"+sys.argv[1]+".png")
+

@@ -6,7 +6,7 @@ from game import game
 import time
 import matplotlib.pyplot as plt
 playouts = int(sys.argv[1])
-model_name = "X_DQNN"
+model_name = sys.argv[3]
 lr = float(sys.argv[2])
 surv = []
 win_rate = []
