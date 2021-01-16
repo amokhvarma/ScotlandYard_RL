@@ -7,7 +7,7 @@ from game import game
 import time
 import matplotlib.pyplot as plt
 playouts = int(sys.argv[1])
-model_name = "D_DQNN"
+model_name = str(sys.argv[3])
 lr = float(sys.argv[2])
 surv = []
 win_rate = []
@@ -52,7 +52,7 @@ while(iter<=playouts):
         plt.title("Loss vs Episodes")
         plt.xlabel("Episode")
         plt.ylabel("MSE Loss in Q value")
-        plt.savefig("Result\\loss_D1.png")
+        plt.savefig("Result\\loss_D2.png")
 
         plot2 = plt.figure(2)
         plt.title("Win rate vs Episodes")
@@ -60,7 +60,7 @@ while(iter<=playouts):
         plt.ylabel("Win rate ")
 
         plt.plot(win_rate)
-        plt.savefig("Result\\win_rate_D1.png")
+        plt.savefig("Result\\win_rate_D2.png")
 
     #G.print_pos()
 print(len(D_agent.memory),D_agent.loss)
