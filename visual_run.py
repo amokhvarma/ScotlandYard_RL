@@ -12,7 +12,7 @@ for i in range(0,1):
     G = game.game()
     pygame.init()
     win = pygame.display.set_mode((1000, 500))
-    pygame.display.set_caption("Ye kha aa gye ham chalte chalte")
+    pygame.display.set_caption("Scotland Yard")
     win.fill((0, 0, 0))
     for i in range(20):
         for j in range(10):
@@ -44,6 +44,8 @@ for i in range(0,1):
             print("\n")
         for i in range(0,4):
             print("Detective ", i, "taking action .. ")
+            if(G.end_flag):
+                continue
             (_,rew,_,_)=G.take_action(None,type[0],[],i,"random")
             print("\n")
         G.update_fv()
