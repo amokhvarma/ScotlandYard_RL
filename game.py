@@ -317,7 +317,7 @@ class game:
     def list_of_action_d(self):
         l=[]
         for i in range(4):
-            l.append(self.detectives[i].list_actions(self.board,self.detectives))
+            l.append(self.detectives[i].list_actions(self.board))
         return l
     # TODO: (Shaurya) Updates the feature vector
 
