@@ -101,6 +101,8 @@ class game:
     # Takes action . Target and mode are lists. planning is "random" for now. Mode = mode of transport, type detective /X
     # example mode : [4,1] , target [46] means that you take a hidden move and use taxi to go to 46
     def take_action(self, target, type, mode, index, planning="None"):
+        if(self.end_flag):
+            return
         action_det_reward, action_x_reward = 0, 0
         if (type == "detective"):
             agent = self.detectives[index]
@@ -318,6 +320,9 @@ class game:
             l.append(self.detectives[i].list_actions(self.board,self.detectives))
         return l
     # TODO: (Shaurya) Updates the feature vector
+
+
+
     def update_fv(self):
         # X
         self.f_x[0][0:199] = to_onehot(self.X.position, 199)
