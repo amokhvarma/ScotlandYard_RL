@@ -20,6 +20,7 @@ while(iter<=playouts):
         print("Move No ", G.move,"\n")
         #print(G.list_of_action_x())
         act = X_agent.train_action(G)
+        print(act)
         state_action = G.f_x_action(act)
         if(act[0] == 4):
             mode = [act[0],act[1]]
@@ -27,7 +28,7 @@ while(iter<=playouts):
         else:
             mode = [act[0]]
             target = [act[1]]
-        print(act)
+        # print(act)
         G.take_action(target,"x",mode,0)
         total_steps+=1
         print("\n")
