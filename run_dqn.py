@@ -33,7 +33,7 @@ while(iter<=playouts):
         print("\n")
         for i in range(G.no_of_players):
             G.take_action(None,"detective",[],i,"random")
-            print("\n")
+            #print("\n")
         G.update_fv()
         step_rew = G.X_reward-rew
         rew = G.X_reward

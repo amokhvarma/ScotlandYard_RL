@@ -1,2 +1,6 @@
-X_DQNN_lr_layers
+a) X_DQNN_lr_layers : - DQNN for X trained with lr-learning rate and layer-No of Layers
+
+b) D_DQNN : - DQNN for detectives
+c) wgt2 :- No idea
+d) X_DQNN_det_mcts : - DQNN for X against "mcts for detective"
 

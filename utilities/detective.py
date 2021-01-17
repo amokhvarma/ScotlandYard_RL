@@ -49,7 +49,7 @@ class detective:
                 break
         return check
 
-    def list_actions(self, board, detectives):
+    def list_actions(self, board):
         connections = board.connections(self.position)
         action = {}
         for i in range(0, 3):
