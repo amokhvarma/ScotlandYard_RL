@@ -14,7 +14,7 @@ surv = []
 win_rate_X = []
 iter = 1
 D_agent = DQN_Det()
-X_agent.load_model("Model/"+(model_name))
+D_agent.load_model("/content/ScotLandYard_RL/Model/DQNN_Det")
 X_agent = DQN_Agent(lr)
 total_steps = 0
 while(iter<=playouts):
@@ -66,7 +66,7 @@ while(iter<=playouts):
 	win_rate_X.append(sum(surv)/len(surv))
 	if(iter%100 == 0):
 		#D_agent.save_model("Model/"+model_name+"_det")
-		X_agent.save_model("Model/"+model_name+"_X")
+		X_agent.save_model("/content/drive/MyDrive/ScotLand_Yard/"+model_name)
 
 		plot1 = plt.figure(1)
 		#print(D_agent.loss)
@@ -74,21 +74,21 @@ while(iter<=playouts):
 		plt.title("X Loss vs Episodes")
 		plt.xlabel("Episode")
 		plt.ylabel("MSE Loss for X in Q value")
-		plt.savefig("Result\\loss_X_adv.png")
+		plt.savefig("/content/drive/MyDrive/ScotLand_Yard/loss_X_adv.png")
 
 		plot2 = plt.figure(2)
 		plt.title("Win rate of X vs Episodes")
 		plt.xlabel("Episode")
 		plt.ylabel("Win rate of X")
 		plt.plot(win_rate_X)
-		plt.savefig("Result\\win_rate_X_adv.png")
+		plt.savefig("/content/drive/MyDrive/ScotLand_Yard/win_rate_X_adv.png")
 
 		plot3 = plt.figure(3)
 		plt.plot(D_agent.loss)
 		plt.title("Det Loss vs Episodes")
 		plt.xlabel("Episode")
 		plt.ylabel("MSE Loss for Dets in Q value")
-		plt.savefig("Result\\loss_dets_adv.png")
+		plt.savefig("/content/drive/MyDrive/ScotLand_Yard/loss_dets_adv.png")
 
 	#G.print_pos()
 print(len(X_agent.memory),X_agent.loss)
