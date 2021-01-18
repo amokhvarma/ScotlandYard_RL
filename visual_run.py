@@ -9,7 +9,6 @@ import pygame
 reward_x,victory = [],0
 for i in range(0,1):
 # Start the run
-<<<<<<< HEAD
 	G = game.game()
 	pygame.init()
 	win = pygame.display.set_mode((1000, 500))
@@ -85,7 +84,6 @@ for i in range(0,1):
 	pygame.display.update()
 	pygame.time.delay(5000)
 	pygame.quit()
-=======
 	G = game.game()
 	pygame.init()
 	win = pygame.display.set_mode((1000, 500))
@@ -161,7 +159,6 @@ for i in range(0,1):
 	pygame.display.update()
 	pygame.time.delay(5000)
 	pygame.quit()
->>>>>>> 81887f4973da2a033068c8c9b90ed9ca89007ce7
 
 print(victory,np.mean(reward_x))
 plt.plot(reward_x)
