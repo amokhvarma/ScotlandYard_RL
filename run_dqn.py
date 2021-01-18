@@ -1,7 +1,7 @@
 import torch
 from copy import deepcopy
 import sys
-from utilities.DQN_Agent import DQN_Agent
+from utilities.DQN_mct_Agent import DQN_mct_Agent
 from game import game
 import time
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ lr = float(sys.argv[2])
 surv = []
 win_rate = []
 iter = 1
-X_agent = DQN_Agent(lr)
+X_agent = DQN_mct_Agent(lr)
 total_steps = 0
 while(iter<=playouts):
     G = game()
