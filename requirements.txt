@@ -1,4 +1,6 @@
-pandas
-numpy
-networkx
-matplotlib
+matplotlib==3.3.3
+networkx==2.5
+numpy==1.19.2
+pandas==1.1.3
+pygame==2.0.1
+torch==1.7.1

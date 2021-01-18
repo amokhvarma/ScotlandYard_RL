@@ -59,7 +59,7 @@ class Node:
 
     def ucb1(self):
         list_of_actions = self.game.list_of_action_x()
-        print(list_of_actions)
+        #print(list_of_actions)
         dict_of_actions = convert_to_dict(list_of_actions)
         val,action = -100,None
         c,N = self.c ,self.visits
@@ -79,14 +79,14 @@ class Node:
                 if(node_val > val):
                     val = node_val
                     action = key
-        print(action)
+        #print(action)
         return action
 
 class mcts:
     def __init__(self, game, c=2, playouts=10, agent=None):
         self.game = copy.deepcopy(game)
         self.c = c
-        print("Monte Carlo Tree Search for X ")
+        #print("Monte Carlo Tree Search for X ")
         self.root = Node(self.game, self.c)
         self.playouts = playouts
 
@@ -95,7 +95,7 @@ class mcts:
         list_of_keys =  convert_to_dict(self.root.game.list_of_action_x())
         hiddenlist = [3,8,13,18]
         #print(list_of_keys)
-        print([(self.root.child[key].reward,self.root.child[key].visits,key) for key in self.root.child.keys() if not self.root.child[key].reward==0])
+        #print([(self.root.child[key].reward,self.root.child[key].visits,key) for key in self.root.child.keys() if not self.root.child[key].reward==0])
         for key in self.root.child.keys():
             if(key not in list_of_keys):
                 continue
@@ -125,7 +125,7 @@ class mcts:
     def planning(self):
         # playouts = 10
         for temp in range(0,self.playouts):
-            print("\n Playout Number : ", temp)
+            #print("\n Playout Number : ", temp)
             iter_node = self.root
 
             # Select Node
@@ -137,7 +137,7 @@ class mcts:
                 iter_node.child[action].set_state(next_state)
 
                 iter_node = iter_node.child[action]
-            print(iter_node.parent==self.root)
+           # print(iter_node.parent==self.root)
             # Expand Node :-
             if(not iter_node.game.finish()):
                 iter_node.child_init()
@@ -145,17 +145,17 @@ class mcts:
                 if(not rand_action==None):
                     iter_node.child[rand_action].set_state(iter_node.simulate_one_step(rand_action))
                     iter_node = iter_node.child[rand_action]
-            print(iter_node.parent.parent==self.root)
+            #print(iter_node.parent.parent==self.root)
             # Two possibilities : node cannot be expanded / can be expanded
             reward = self.simulate(iter_node)
 
             # Backprop from the node
             self.backprop(iter_node,reward)
-        print(self.root.reward)
+        #print(self.root.reward)
         return self.best_action()
 
     def simulate(self,node):
-        print("Simulation..")
+        #print("Simulation..")
         G = copy.deepcopy(node.game)
 
         while(not G.finish()):
@@ -172,11 +172,11 @@ class mcts:
 
 
     def backprop(self,node,reward):
-        print("Backprop : ",node.reward)
+        #print("Backprop : ",node.reward)
         while(not node == None):
             node.reward = (node.visits*node.reward+reward)/(node.visits+1)
             node.visits+=1
             node = node.parent
-            print("*******************************************************************")
+            #print("*******************************************************************")
         return 0
 
